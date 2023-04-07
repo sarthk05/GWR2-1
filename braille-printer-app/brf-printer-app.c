@@ -17,6 +17,36 @@
 
 extern bool	brf_gen(pappl_system_t *system, const char *driver_name, const char *device_uri, const char *device_id, pappl_pr_driver_data_t *data, ipp_t **attrs, void *cbdata);
 extern char* strdup(const char*);
+
+//
+// 'brfCreateJobData()' - Load the printer's PPD file and set the PPD options
+//                          according to the job options
+//
+
+typedef struct brf_job_data_s		// Job data
+{
+  char                  *device_uri;    // Printer device URI
+                                          // PPD file to be used by CUPS filters
+  cf_filter_data_t         *filter_data;   // Common print job data for filter
+                                        // functions
+  char                  *stream_filter; // CUPS Filter to use when printing
+                                        // in streaming mode (Raster input)
+  cups_array_t          *chain;         // Filter function chain
+  cf_filter_filter_in_chain_t *ppd_filter, // Filter from PPD file
+                        *print;         // Filter function call for printing
+  int                   device_fd;      // File descriptor to pipe output
+                                        // to the device
+  int                   device_pid;     // Process ID for device output
+                                        // sub-process
+  FILE                  *device_file;   // File pointer for output to
+                                        // device
+  int                   line_count;     // Raster lines actually received for
+                                        // this page
+  void                  *data;          // Job-type-specific data
+  brf_printer_app_global_data_t *global_data; // Global data
+} brf_job_data_t;
+
+
 //
 // Local functions...
 //
@@ -792,32 +822,7 @@ brf_print_filter_function(int inputfd,            // I - File descriptor input
   close(outputfd);
   return (0);
 }
-//
-// 'brfCreateJobData()' - Load the printer's PPD file and set the PPD options
-//                          according to the job options
-//
-typedef struct brf_job_data_s		// Job data
-{
-  char                  *device_uri;    // Printer device URI
-                                          // PPD file to be used by CUPS filters
-  cf_filter_data_t         *filter_data;   // Common print job data for filter
-                                        // functions
-  char                  *stream_filter; // CUPS Filter to use when printing
-                                        // in streaming mode (Raster input)
-  cups_array_t          *chain;         // Filter function chain
-  cf_filter_filter_in_chain_t *ppd_filter, // Filter from PPD file
-                        *print;         // Filter function call for printing
-  int                   device_fd;      // File descriptor to pipe output
-                                        // to the device
-  int                   device_pid;     // Process ID for device output
-                                        // sub-process
-  FILE                  *device_file;   // File pointer for output to
-                                        // device
-  int                   line_count;     // Raster lines actually received for
-                                        // this page
-  void                  *data;          // Job-type-specific data
-  brf_printer_app_global_data_t *global_data; // Global data
-} brf_job_data_t;
+
 
 brf_job_data_t *
 _brfCreateJobData(pappl_job_t *job,
