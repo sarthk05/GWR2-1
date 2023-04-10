@@ -23,6 +23,53 @@ extern char* strdup(const char*);
 //                          according to the job options
 //
 
+// Items to configure the properties of this Printer Application
+// These items do not change while the Printer Application is running
+
+typedef struct brf_printer_app_config_s
+{
+  // Identification of the Printer Application
+  const char        *system_name;        // Name of the system
+  const char        *system_package_name;// Name of Printer Application
+                                         // package/executable
+  const char        *version;            // Program version number string
+  unsigned short    numeric_version[4];  // Numeric program version
+  const char        *web_if_footer;      // HTML Footer for web interface
+  
+  pappl_pr_autoadd_cb_t autoadd_cb;
+
+  
+  pappl_pr_identify_cb_t identify_cb;
+
+
+  pappl_pr_testpage_cb_t testpage_cb;
+
+
+  cups_array_t      *spooling_conversions;
+
+  
+  cups_array_t      *stream_formats;
+  const char        *backends_ignore;
+
+  const char        *backends_only;
+
+  void              *testpage_data;
+
+} pr_printer_app_config_t;
+
+
+typedef struct brf_printer_app_global_data_s
+{
+  pr_printer_app_config_t *config;
+  pappl_system_t          *system;
+  int                     num_drivers;     // Number of drivers (from the PPDs)
+  pappl_pr_driver_t       *drivers;        // Driver index (for menu and
+                                           // auto-add)
+   char              spool_dir[1024];     // Spool directory, customizable via
+                                         // SPOOL_DIR environment variable                                         
+
+} brf_printer_app_global_data_t;
+
 typedef struct brf_job_data_s		// Job data
 {
   char                  *device_uri;    // Printer device URI
@@ -472,52 +519,6 @@ system_cb(
 //
 // 'BRFTestFilterCB()' - Print a test page.
 //
-
-// Items to configure the properties of this Printer Application
-// These items do not change while the Printer Application is running
-typedef struct brf_printer_app_config_s
-{
-  // Identification of the Printer Application
-  const char        *system_name;        // Name of the system
-  const char        *system_package_name;// Name of Printer Application
-                                         // package/executable
-  const char        *version;            // Program version number string
-  unsigned short    numeric_version[4];  // Numeric program version
-  const char        *web_if_footer;      // HTML Footer for web interface
-  
-  pappl_pr_autoadd_cb_t autoadd_cb;
-
-  
-  pappl_pr_identify_cb_t identify_cb;
-
-
-  pappl_pr_testpage_cb_t testpage_cb;
-
-
-  cups_array_t      *spooling_conversions;
-
-  
-  cups_array_t      *stream_formats;
-  const char        *backends_ignore;
-
-  const char        *backends_only;
-
-  void              *testpage_data;
-
-} pr_printer_app_config_t;
-
-typedef struct brf_printer_app_global_data_s
-{
-  pr_printer_app_config_t *config;
-  pappl_system_t          *system;
-  int                     num_drivers;     // Number of drivers (from the PPDs)
-  pappl_pr_driver_t       *drivers;        // Driver index (for menu and
-                                           // auto-add)
-   char              spool_dir[1024];     // Spool directory, customizable via
-                                         // SPOOL_DIR environment variable                                         
-
-} brf_printer_app_global_data_t;
-
 
 
 // Data for brf_print_filter_function()
