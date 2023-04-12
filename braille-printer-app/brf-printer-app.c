@@ -541,6 +541,8 @@ typedef struct brf_cups_device_data_s
   double back_timeout, // Timeout back channel (sec)
       side_timeout;    // Timeout side channel (sec)
 
+  cf_filter_data_t         *filter_data;   // Common print job data for filter
+
   cf_filter_filter_in_chain_t *chain_filter; // Filters in chain
         // Common data for filter functions
   cf_filter_external_t backend_params; // Parameters for launching
