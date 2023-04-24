@@ -1,5 +1,7 @@
 
-
+#ifndef _GNU_SOURCE
+#  define _GNU_SOURCE
+#endif
 //
 // Include necessary headers...
 #include <strings.h>
